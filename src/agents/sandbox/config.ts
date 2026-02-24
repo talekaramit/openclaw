@@ -1,4 +1,5 @@
 import type { OpenClawConfig } from "../../config/config.js";
+import { resolveScopedSecretEnv } from "../../config/scoped-secrets.js";
 import { resolveAgentConfig } from "../agent-scope.js";
 import { resolveToolConfigPreset } from "../tool-config-presets.js";
 import {
@@ -168,6 +169,17 @@ export function resolveSandboxConfigForAgent(
   });
 
   const toolPolicy = resolveSandboxToolPolicyForAgent(cfg, agentId);
+  const docker = resolveSandboxDockerConfig({
+    scope,
+    globalDocker: agent?.docker,
+    agentDocker: agentSandbox?.docker,
+  });
+  const sandboxSecrets = resolveScopedSecretEnv({
+    config: cfg,
+    agentId,
+    target: "sandbox",
+    host: "sandbox",
+  });
 
   return {
     mode: agentSandbox?.mode ?? agent?.mode ?? "off",
@@ -175,11 +187,10 @@ export function resolveSandboxConfigForAgent(
     workspaceAccess: agentSandbox?.workspaceAccess ?? agent?.workspaceAccess ?? "none",
     workspaceRoot:
       agentSandbox?.workspaceRoot ?? agent?.workspaceRoot ?? DEFAULT_SANDBOX_WORKSPACE_ROOT,
-    docker: resolveSandboxDockerConfig({
-      scope,
-      globalDocker: agent?.docker,
-      agentDocker: agentSandbox?.docker,
-    }),
+    docker: {
+      ...docker,
+      env: { ...docker.env, ...sandboxSecrets.env },
+    },
     browser: resolveSandboxBrowserConfig({
       scope,
       globalBrowser: {

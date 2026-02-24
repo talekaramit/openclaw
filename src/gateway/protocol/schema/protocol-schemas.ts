@@ -34,6 +34,10 @@ import {
   SkillsInstallParamsSchema,
   SkillsStatusParamsSchema,
   SkillsUpdateParamsSchema,
+  SecretsListParamsSchema,
+  SecretsSetParamsSchema,
+  SecretsDeleteParamsSchema,
+  SecretsAssignParamsSchema,
 } from "./agents-models-skills.js";
 import {
   AppCreateParamsSchema,
@@ -246,6 +250,10 @@ export const ProtocolSchemas: Record<string, TSchema> = {
   SkillsBinsResult: SkillsBinsResultSchema,
   SkillsInstallParams: SkillsInstallParamsSchema,
   SkillsUpdateParams: SkillsUpdateParamsSchema,
+  SecretsListParams: SecretsListParamsSchema,
+  SecretsSetParams: SecretsSetParamsSchema,
+  SecretsDeleteParams: SecretsDeleteParamsSchema,
+  SecretsAssignParams: SecretsAssignParamsSchema,
   CronJob: CronJobSchema,
   CronListParams: CronListParamsSchema,
   CronStatusParams: CronStatusParamsSchema,

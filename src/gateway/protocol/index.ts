@@ -203,6 +203,14 @@ import {
   SkillsStatusParamsSchema,
   type SkillsUpdateParams,
   SkillsUpdateParamsSchema,
+  type SecretsListParams,
+  SecretsListParamsSchema,
+  type SecretsSetParams,
+  SecretsSetParamsSchema,
+  type SecretsDeleteParams,
+  SecretsDeleteParamsSchema,
+  type SecretsAssignParams,
+  SecretsAssignParamsSchema,
   type Snapshot,
   SnapshotSchema,
   type StateVersion,
@@ -335,6 +343,12 @@ export const validateSkillsBinsParams = ajv.compile<SkillsBinsParams>(SkillsBins
 export const validateSkillsInstallParams =
   ajv.compile<SkillsInstallParams>(SkillsInstallParamsSchema);
 export const validateSkillsUpdateParams = ajv.compile<SkillsUpdateParams>(SkillsUpdateParamsSchema);
+export const validateSecretsListParams = ajv.compile<SecretsListParams>(SecretsListParamsSchema);
+export const validateSecretsSetParams = ajv.compile<SecretsSetParams>(SecretsSetParamsSchema);
+export const validateSecretsDeleteParams =
+  ajv.compile<SecretsDeleteParams>(SecretsDeleteParamsSchema);
+export const validateSecretsAssignParams =
+  ajv.compile<SecretsAssignParams>(SecretsAssignParamsSchema);
 export const validateCronListParams = ajv.compile<CronListParams>(CronListParamsSchema);
 export const validateCronStatusParams = ajv.compile<CronStatusParams>(CronStatusParamsSchema);
 export const validateCronAddParams = ajv.compile<CronAddParams>(CronAddParamsSchema);

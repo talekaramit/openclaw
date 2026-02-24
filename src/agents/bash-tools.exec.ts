@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import type { AgentTool, AgentToolResult } from "@mariozechner/pi-agent-core";
+import { loadConfig } from "../config/config.js";
+import { resolveScopedSecretEnv } from "../config/scoped-secrets.js";
 import { type ExecHost, maxAsk, minSecurity, resolveSafeBins } from "../infra/exec-approvals.js";
 import { getTrustedSafeBinDirs } from "../infra/exec-safe-bin-trust.js";
 import {
@@ -332,14 +334,25 @@ export function createExecTool(
 
       const mergedEnv = params.env ? { ...baseEnv, ...params.env } : baseEnv;
 
+      const scopedSecretEnv = resolveScopedSecretEnv({
+        config: loadConfig(),
+        agentId,
+        target: "exec",
+        host,
+      });
       const env = sandbox
         ? buildSandboxEnv({
             defaultPath: DEFAULT_PATH,
-            paramsEnv: params.env,
+            paramsEnv: { ...scopedSecretEnv.env, ...params.env },
             sandboxEnv: sandbox.env,
             containerWorkdir: containerWorkdir ?? sandbox.containerWorkdir,
           })
-        : mergedEnv;
+        : { ...mergedEnv, ...scopedSecretEnv.env };
+      if (scopedSecretEnv.scopes.length > 0) {
+        logInfo(
+          `audit secrets boundary=exec host=${host} scopes=${scopedSecretEnv.scopes.join(",")}`,
+        );
+      }
 
       if (!sandbox && host === "gateway" && !params.env?.PATH) {
         const shellPath = getShellPathFromLoginShell({

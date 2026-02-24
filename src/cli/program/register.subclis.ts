@@ -126,6 +126,16 @@ const entries: SubCliEntry[] = [
       mod.registerNodeCli(program);
     },
   },
+
+  {
+    name: "secrets",
+    description: "Manage app/agent scoped secrets",
+    hasSubcommands: true,
+    register: async (program) => {
+      const mod = await import("../secrets-cli.js");
+      mod.registerSecretsCli(program);
+    },
+  },
   {
     name: "sandbox",
     description: "Manage sandbox containers for agent isolation",
