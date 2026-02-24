@@ -259,10 +259,12 @@ export async function runEmbeddedAttempt(
       ? applySkillEnvOverridesFromSnapshot({
           snapshot: params.skillsSnapshot,
           config: params.config,
+          agentId: params.agentId,
         })
       : applySkillEnvOverrides({
           skills: skillEntries ?? [],
           config: params.config,
+          agentId: params.agentId,
         });
 
     const skillsPrompt = resolveSkillsPromptForRun({

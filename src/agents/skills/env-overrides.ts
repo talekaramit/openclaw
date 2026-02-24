@@ -1,4 +1,5 @@
 import type { OpenClawConfig } from "../../config/config.js";
+import { resolveScopedSecretEnv } from "../../config/scoped-secrets.js";
 import { isDangerousHostEnvVarName } from "../../infra/host-env-security.js";
 import { sanitizeEnvVars, validateEnvVarValue } from "../sandbox/sanitize-env-vars.js";
 import { resolveSkillConfig } from "./config.js";
@@ -144,9 +145,25 @@ function createEnvReverter(updates: EnvUpdate[]) {
   };
 }
 
-export function applySkillEnvOverrides(params: { skills: SkillEntry[]; config?: OpenClawConfig }) {
-  const { skills, config } = params;
+export function applySkillEnvOverrides(params: {
+  skills: SkillEntry[];
+  config?: OpenClawConfig;
+  agentId?: string;
+}) {
+  const { skills, config, agentId } = params;
   const updates: EnvUpdate[] = [];
+
+  const secretEnv = resolveScopedSecretEnv({ config, agentId, target: "skills" });
+  for (const [envKey, envValue] of Object.entries(secretEnv.env)) {
+    if (process.env[envKey]) {
+      continue;
+    }
+    updates.push({ key: envKey, prev: process.env[envKey] });
+    process.env[envKey] = envValue;
+  }
+  if (secretEnv.scopes.length > 0) {
+    console.info(`[Audit] skill env injected scoped secrets: scopes=${secretEnv.scopes.join(",")}`);
+  }
 
   for (const entry of skills) {
     const skillKey = resolveSkillKey(entry.skill, entry);
@@ -170,12 +187,26 @@ export function applySkillEnvOverrides(params: { skills: SkillEntry[]; config?: 
 export function applySkillEnvOverridesFromSnapshot(params: {
   snapshot?: SkillSnapshot;
   config?: OpenClawConfig;
+  agentId?: string;
 }) {
-  const { snapshot, config } = params;
+  const { snapshot, config, agentId } = params;
   if (!snapshot) {
     return () => {};
   }
   const updates: EnvUpdate[] = [];
+  const secretEnv = resolveScopedSecretEnv({ config, agentId, target: "skills" });
+  for (const [envKey, envValue] of Object.entries(secretEnv.env)) {
+    if (process.env[envKey]) {
+      continue;
+    }
+    updates.push({ key: envKey, prev: process.env[envKey] });
+    process.env[envKey] = envValue;
+  }
+  if (secretEnv.scopes.length > 0) {
+    console.info(
+      `[Audit] skill snapshot env injected scoped secrets: scopes=${secretEnv.scopes.join(",")}`,
+    );
+  }
 
   for (const skill of snapshot.skills) {
     const skillConfig = resolveSkillConfig(config, skill.name);

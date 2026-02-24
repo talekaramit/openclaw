@@ -27,6 +27,28 @@ import type { SkillsConfig } from "./types.skills.js";
 import type { ToolsConfig } from "./types.tools.js";
 
 export type OpenClawConfig = {
+  secrets?: {
+    app?: Record<
+      string,
+      {
+        value?: string;
+        targets?: Array<"sandbox" | "skills" | "exec">;
+        /** Allow this secret for host exec (gateway/node). Sandbox exec always allowed. */
+        allowHostExec?: boolean;
+      }
+    >;
+    agents?: Record<
+      string,
+      Record<
+        string,
+        {
+          value?: string;
+          targets?: Array<"sandbox" | "skills" | "exec">;
+          allowHostExec?: boolean;
+        }
+      >
+    >;
+  };
   meta?: {
     /** Last OpenClaw version that wrote this config. */
     lastTouchedVersion?: string;

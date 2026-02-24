@@ -628,6 +628,42 @@ export const OpenClawSchema = z
       .strict()
       .optional(),
     memory: MemorySchema,
+    secrets: z
+      .object({
+        app: z
+          .record(
+            z.string(),
+            z
+              .object({
+                value: z.string().optional().register(sensitive),
+                targets: z
+                  .array(z.union([z.literal("sandbox"), z.literal("skills"), z.literal("exec")]))
+                  .optional(),
+                allowHostExec: z.boolean().optional(),
+              })
+              .strict(),
+          )
+          .optional(),
+        agents: z
+          .record(
+            z.string(),
+            z.record(
+              z.string(),
+              z
+                .object({
+                  value: z.string().optional().register(sensitive),
+                  targets: z
+                    .array(z.union([z.literal("sandbox"), z.literal("skills"), z.literal("exec")]))
+                    .optional(),
+                  allowHostExec: z.boolean().optional(),
+                })
+                .strict(),
+            ),
+          )
+          .optional(),
+      })
+      .strict()
+      .optional(),
     skills: z
       .object({
         allowBundled: z.array(z.string()).optional(),

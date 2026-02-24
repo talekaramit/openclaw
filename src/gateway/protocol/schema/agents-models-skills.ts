@@ -207,3 +207,46 @@ export const SkillsUpdateParamsSchema = Type.Object(
   },
   { additionalProperties: false },
 );
+
+export const SecretsListParamsSchema = Type.Object(
+  {
+    agentId: Type.Optional(NonEmptyString),
+  },
+  { additionalProperties: false },
+);
+
+export const SecretsSetParamsSchema = Type.Object(
+  {
+    scope: Type.Optional(Type.Union([Type.Literal("app"), Type.Literal("agent")])),
+    agentId: Type.Optional(NonEmptyString),
+    key: NonEmptyString,
+    value: Type.String(),
+    targets: Type.Optional(
+      Type.Array(
+        Type.Union([Type.Literal("sandbox"), Type.Literal("skills"), Type.Literal("exec")]),
+      ),
+    ),
+    allowHostExec: Type.Optional(Type.Boolean()),
+  },
+  { additionalProperties: false },
+);
+
+export const SecretsDeleteParamsSchema = Type.Object(
+  {
+    scope: Type.Optional(Type.Union([Type.Literal("app"), Type.Literal("agent")])),
+    agentId: Type.Optional(NonEmptyString),
+    key: NonEmptyString,
+  },
+  { additionalProperties: false },
+);
+
+export const SecretsAssignParamsSchema = Type.Object(
+  {
+    scope: Type.Optional(Type.Union([Type.Literal("app"), Type.Literal("agent")])),
+    agentId: Type.Optional(NonEmptyString),
+    key: NonEmptyString,
+    target: Type.Union([Type.Literal("sandbox"), Type.Literal("skills"), Type.Literal("exec")]),
+    enabled: Type.Optional(Type.Boolean()),
+  },
+  { additionalProperties: false },
+);
