@@ -289,6 +289,10 @@ export const ToolProfileSchema = z
   .union([z.literal("minimal"), z.literal("coding"), z.literal("messaging"), z.literal("full")])
   .optional();
 
+export const ToolConfigPresetSchema = z
+  .union([z.literal("container-agent-default"), z.literal("container-agent-restricted")])
+  .optional();
+
 type AllowlistPolicy = {
   allow?: string[];
   alsoAllow?: string[];
@@ -432,6 +436,7 @@ export const AgentSandboxSchema = z
 
 export const AgentToolsSchema = z
   .object({
+    preset: ToolConfigPresetSchema,
     profile: ToolProfileSchema,
     allow: z.array(z.string()).optional(),
     alsoAllow: z.array(z.string()).optional(),
@@ -446,6 +451,18 @@ export const AgentToolsSchema = z
       .optional(),
     exec: AgentToolExecSchema,
     fs: ToolFsSchema,
+    sessions: z
+      .object({
+        visibility: z.enum(["self", "tree", "agent", "all"]).optional(),
+      })
+      .strict()
+      .optional(),
+    subagents: z
+      .object({
+        tools: ToolPolicySchema,
+      })
+      .strict()
+      .optional(),
     loopDetection: ToolLoopDetectionSchema,
     sandbox: z
       .object({
@@ -631,6 +648,7 @@ export const AgentEntrySchema = z
 
 export const ToolsSchema = z
   .object({
+    preset: ToolConfigPresetSchema,
     profile: ToolProfileSchema,
     allow: z.array(z.string()).optional(),
     alsoAllow: z.array(z.string()).optional(),

@@ -47,6 +47,7 @@ import { cleanToolSchemaForGemini, normalizeToolParameters } from "./pi-tools.sc
 import type { AnyAgentTool } from "./pi-tools.types.js";
 import type { SandboxContext } from "./sandbox.js";
 import { getSubagentDepthFromSessionStore } from "./subagent-depth.js";
+import { resolvePresetAwareToolsConfig } from "./tool-config-presets.js";
 import {
   applyToolPolicyPipeline,
   buildDefaultToolPolicyPipelineSteps,
@@ -94,7 +95,8 @@ function isApplyPatchAllowedForModel(params: {
 
 function resolveExecConfig(params: { cfg?: OpenClawConfig; agentId?: string }) {
   const cfg = params.cfg;
-  const globalExec = cfg?.tools?.exec;
+  const globalTools = resolvePresetAwareToolsConfig(cfg?.tools);
+  const globalExec = globalTools?.exec;
   const agentExec =
     cfg && params.agentId ? resolveAgentConfig(cfg, params.agentId)?.tools?.exec : undefined;
   return {
@@ -118,7 +120,8 @@ function resolveExecConfig(params: { cfg?: OpenClawConfig; agentId?: string }) {
 
 function resolveFsConfig(params: { cfg?: OpenClawConfig; agentId?: string }) {
   const cfg = params.cfg;
-  const globalFs = cfg?.tools?.fs;
+  const globalTools = resolvePresetAwareToolsConfig(cfg?.tools);
+  const globalFs = globalTools?.fs;
   const agentFs =
     cfg && params.agentId ? resolveAgentConfig(cfg, params.agentId)?.tools?.fs : undefined;
   return {
@@ -130,7 +133,7 @@ export function resolveToolLoopDetectionConfig(params: {
   cfg?: OpenClawConfig;
   agentId?: string;
 }): ToolLoopDetectionConfig | undefined {
-  const global = params.cfg?.tools?.loopDetection;
+  const global = resolvePresetAwareToolsConfig(params.cfg?.tools)?.loopDetection;
   const agent =
     params.agentId && params.cfg
       ? resolveAgentConfig(params.cfg, params.agentId)?.tools?.loopDetection

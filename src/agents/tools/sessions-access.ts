@@ -1,5 +1,6 @@
 import type { OpenClawConfig } from "../../config/config.js";
 import { isSubagentSessionKey, resolveAgentIdFromSessionKey } from "../../routing/session-key.js";
+import { resolvePresetAwareToolsConfig } from "../tool-config-presets.js";
 import {
   listSpawnedSessionKeys,
   resolveInternalSessionKey,
@@ -21,8 +22,9 @@ export type SessionAccessResult =
   | { allowed: false; error: string; status: "forbidden" };
 
 export function resolveSessionToolsVisibility(cfg: OpenClawConfig): SessionToolsVisibility {
-  const raw = (cfg.tools as { sessions?: { visibility?: unknown } } | undefined)?.sessions
-    ?.visibility;
+  const raw = (
+    resolvePresetAwareToolsConfig(cfg.tools) as { sessions?: { visibility?: unknown } } | undefined
+  )?.sessions?.visibility;
   const value = typeof raw === "string" ? raw.trim().toLowerCase() : "";
   if (value === "self" || value === "tree" || value === "agent" || value === "all") {
     return value;

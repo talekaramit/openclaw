@@ -1,5 +1,6 @@
 import type { OpenClawConfig } from "../../config/config.js";
 import { resolveAgentConfig } from "../agent-scope.js";
+import { resolveToolConfigPreset } from "../tool-config-presets.js";
 import {
   DEFAULT_SANDBOX_BROWSER_AUTOSTART_TIMEOUT_MS,
   DEFAULT_SANDBOX_BROWSER_CDP_PORT,
@@ -151,6 +152,8 @@ export function resolveSandboxConfigForAgent(
   agentId?: string,
 ): SandboxConfig {
   const agent = cfg?.agents?.defaults?.sandbox;
+  const globalPresetAllowHostControl = resolveToolConfigPreset(cfg?.tools?.preset)?.sandbox?.browser
+    ?.allowHostControl;
 
   // Agent-specific sandbox config overrides global
   let agentSandbox: typeof agent | undefined;
@@ -179,7 +182,10 @@ export function resolveSandboxConfigForAgent(
     }),
     browser: resolveSandboxBrowserConfig({
       scope,
-      globalBrowser: agent?.browser,
+      globalBrowser: {
+        ...agent?.browser,
+        allowHostControl: agent?.browser?.allowHostControl ?? globalPresetAllowHostControl,
+      },
       agentBrowser: agentSandbox?.browser,
     }),
     tools: {

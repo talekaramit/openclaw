@@ -128,6 +128,7 @@ export type MediaToolsConfig = {
 };
 
 export type ToolProfileId = "minimal" | "coding" | "messaging" | "full";
+export type ToolConfigPresetId = "container-agent-default" | "container-agent-restricted";
 
 export type ToolLoopDetectionDetectorConfig = {
   /** Enable warning/blocking for repeated identical calls to the same tool/params. */
@@ -231,6 +232,8 @@ export type FsToolsConfig = {
 };
 
 export type AgentToolsConfig = {
+  /** Preset that maps to predefined tool/sandbox defaults for containerized agents. */
+  preset?: ToolConfigPresetId;
   /** Base tool profile applied before allow/deny lists. */
   profile?: ToolProfileId;
   allow?: string[];
@@ -252,6 +255,15 @@ export type AgentToolsConfig = {
   fs?: FsToolsConfig;
   /** Runtime loop detection for repetitive/ stuck tool-call patterns. */
   loopDetection?: ToolLoopDetectionConfig;
+  sessions?: {
+    visibility?: SessionsToolsVisibility;
+  };
+  subagents?: {
+    tools?: {
+      allow?: string[];
+      deny?: string[];
+    };
+  };
   sandbox?: {
     tools?: {
       allow?: string[];
@@ -377,6 +389,8 @@ export type MemorySearchConfig = {
 };
 
 export type ToolsConfig = {
+  /** Preset that maps to predefined tool/sandbox defaults for containerized agents. */
+  preset?: ToolConfigPresetId;
   /** Base tool profile applied before allow/deny lists. */
   profile?: ToolProfileId;
   allow?: string[];
