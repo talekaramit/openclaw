@@ -25,8 +25,12 @@ function buildProps(result: SessionsListResult): SessionsProps {
     basePath: "",
     onFiltersChange: () => undefined,
     onRefresh: () => undefined,
+    subagentsLoading: false,
+    subagentsError: null,
+    subagentsGraph: null,
     onPatch: () => undefined,
     onDelete: () => undefined,
+    onSubagentAction: () => undefined,
   };
 }
 

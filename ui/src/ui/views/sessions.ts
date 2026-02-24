@@ -2,7 +2,12 @@ import { html, nothing } from "lit";
 import { formatRelativeTimestamp } from "../format.ts";
 import { pathForTab } from "../navigation.ts";
 import { formatSessionTokens } from "../presenter.ts";
-import type { GatewaySessionRow, SessionsListResult } from "../types.ts";
+import type {
+  GatewaySessionRow,
+  SessionsListResult,
+  SubagentRunNode,
+  SubagentsGraphResult,
+} from "../types.ts";
 
 export type SessionsProps = {
   loading: boolean;
@@ -20,6 +25,14 @@ export type SessionsProps = {
     includeUnknown: boolean;
   }) => void;
   onRefresh: () => void;
+  subagentsLoading: boolean;
+  subagentsError: string | null;
+  subagentsGraph: SubagentsGraphResult | null;
+  onSubagentAction: (
+    action: "kill" | "steer" | "message",
+    target: string,
+    message?: string,
+  ) => void;
   onPatch: (
     key: string,
     patch: {
@@ -107,6 +120,57 @@ function resolveThinkLevelPatchValue(value: string, isBinary: boolean): string |
   return value;
 }
 
+function renderSubagentTree(props: SessionsProps) {
+  const graph = props.subagentsGraph;
+  const nodes = graph?.nodes ?? [];
+  const children = new Map<string, SubagentRunNode[]>();
+  for (const node of nodes) {
+    const arr = children.get(node.parentSessionKey) ?? [];
+    arr.push(node);
+    children.set(node.parentSessionKey, arr);
+  }
+  const root = graph?.rootSessionKey;
+  const renderNode = (node: SubagentRunNode, depth: number): unknown => html`
+    <div style="margin-left:${depth * 16}px; padding:6px 0; border-top:1px solid var(--border);">
+      <div><strong>${node.label ?? node.sessionKey}</strong> · ${node.state}</div>
+      <div class="muted">${node.model ?? "model n/a"} · ${Math.round((node.runtimeMs ?? 0) / 1000)}s · ${node.runId}</div>
+      <div class="row" style="gap:6px; margin-top:6px;">
+        <button class="btn btn--sm" @click=${() => props.onSubagentAction("kill", node.runId)}>Kill</button>
+        <button class="btn btn--sm" @click=${() => {
+          const text = window.prompt("Steer message");
+          if (text) {
+            props.onSubagentAction("steer", node.runId, text);
+          }
+        }}>Steer</button>
+        <button class="btn btn--sm" @click=${() => {
+          const text = window.prompt("Message to subagent session");
+          if (text) {
+            props.onSubagentAction("message", node.sessionKey, text);
+          }
+        }}>Send message</button>
+      </div>
+      ${(children.get(node.sessionKey) ?? []).map((child) => renderNode(child, depth + 1))}
+    </div>`;
+  return html`<section class="card" style="margin-top: 12px;">
+    <div class="card-title">Subagent Runs</div>
+    ${props.subagentsError ? html`<div class="callout danger" style="margin-top:8px;">${props.subagentsError}</div>` : nothing}
+    ${
+      props.subagentsLoading
+        ? html`
+            <div class="muted" style="margin-top: 8px">Loading subagent graph…</div>
+          `
+        : nothing
+    }
+    ${
+      !props.subagentsLoading && nodes.length === 0
+        ? html`
+            <div class="muted" style="margin-top: 8px">No subagent runs.</div>
+          `
+        : nothing
+    }
+    ${root ? (children.get(root) ?? []).map((node) => renderNode(node, 0)) : nothing}
+  </section>`;
+}
 export function renderSessions(props: SessionsProps) {
   const rows = props.result?.sessions ?? [];
   return html`
@@ -211,6 +275,7 @@ export function renderSessions(props: SessionsProps) {
         }
       </div>
     </section>
+    ${renderSubagentTree(props)}
   `;
 }
 

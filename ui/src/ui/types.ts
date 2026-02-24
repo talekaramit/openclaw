@@ -566,3 +566,24 @@ export type LogEntry = {
   message?: string | null;
   meta?: Record<string, unknown> | null;
 };
+
+export type SubagentRunNode = {
+  runId: string;
+  parentSessionKey: string;
+  sessionKey: string;
+  state: "queued" | "running" | "completed" | "failed" | "timed_out";
+  task?: string;
+  label?: string;
+  model?: string;
+  runtimeMs?: number;
+  tokens?: number;
+  linkedSessionKey: string;
+  startedAt?: number;
+  endedAt?: number;
+};
+
+export type SubagentsGraphResult = {
+  rootSessionKey: string;
+  nodes: SubagentRunNode[];
+  ts: number;
+};

@@ -237,6 +237,9 @@ export class OpenClawApp extends LitElement {
   @state() sessionsFilterLimit = "120";
   @state() sessionsIncludeGlobal = true;
   @state() sessionsIncludeUnknown = false;
+  @state() subagentsLoading = false;
+  @state() subagentsError: string | null = null;
+  @state() subagentsGraph: import("./types.ts").SubagentsGraphResult | null = null;
 
   @state() usageLoading = false;
   @state() usageResult: import("./types.js").SessionsUsageResult | null = null;
