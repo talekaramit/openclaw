@@ -1,3 +1,4 @@
+import type { AgenticAppConfig } from "./types.agentic-app.js";
 import type { AgentBinding, AgentsConfig } from "./types.agents.js";
 import type { ApprovalsConfig } from "./types.approvals.js";
 import type { AuthConfig } from "./types.auth.js";
@@ -81,6 +82,7 @@ export type OpenClawConfig = {
   nodeHost?: NodeHostConfig;
   agents?: AgentsConfig;
   tools?: ToolsConfig;
+  agenticApp?: AgenticAppConfig;
   bindings?: AgentBinding[];
   broadcast?: BroadcastConfig;
   audio?: AudioConfig;

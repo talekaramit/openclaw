@@ -33,6 +33,16 @@ import type {
   SkillsStatusParamsSchema,
   SkillsUpdateParamsSchema,
 } from "./agents-models-skills.js";
+import {
+  AppCreateParamsSchema,
+  AppCreateResultSchema,
+  AppStartParamsSchema,
+  AppStartResultSchema,
+  AppStatusParamsSchema,
+  AppStatusResultSchema,
+  AppStopParamsSchema,
+  AppStopResultSchema,
+} from "./app.js";
 import type {
   ChannelsLogoutParamsSchema,
   TalkConfigParamsSchema,
@@ -149,6 +159,14 @@ export type AgentIdentityParams = Static<typeof AgentIdentityParamsSchema>;
 export type AgentIdentityResult = Static<typeof AgentIdentityResultSchema>;
 export type PollParams = Static<typeof PollParamsSchema>;
 export type AgentWaitParams = Static<typeof AgentWaitParamsSchema>;
+export type AppCreateParams = Static<typeof AppCreateParamsSchema>;
+export type AppCreateResult = Static<typeof AppCreateResultSchema>;
+export type AppStartParams = Static<typeof AppStartParamsSchema>;
+export type AppStartResult = Static<typeof AppStartResultSchema>;
+export type AppStopParams = Static<typeof AppStopParamsSchema>;
+export type AppStopResult = Static<typeof AppStopResultSchema>;
+export type AppStatusParams = Static<typeof AppStatusParamsSchema>;
+export type AppStatusResult = Static<typeof AppStatusResultSchema>;
 export type WakeParams = Static<typeof WakeParamsSchema>;
 export type NodePairRequestParams = Static<typeof NodePairRequestParamsSchema>;
 export type NodePairListParams = Static<typeof NodePairListParamsSchema>;

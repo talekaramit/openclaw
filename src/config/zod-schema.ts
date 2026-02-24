@@ -94,6 +94,57 @@ const MemorySchema = z
   .strict()
   .optional();
 
+const AgenticAppSchema = z
+  .object({
+    sandbox: z
+      .object({
+        defaultProfile: z
+          .union([z.literal("off"), z.literal("workspace-write"), z.literal("workspace-read")])
+          .optional(),
+        workspaceRoot: z.string().optional(),
+        workspaceMode: z.union([z.literal("shared"), z.literal("session")]).optional(),
+      })
+      .strict()
+      .optional(),
+    tools: z
+      .object({
+        bundles: z
+          .object({
+            file: z.boolean().optional(),
+            browser: z.boolean().optional(),
+            exec: z.boolean().optional(),
+            api: z.boolean().optional(),
+          })
+          .strict()
+          .optional(),
+      })
+      .strict()
+      .optional(),
+    subagents: z
+      .object({
+        maxActiveRuns: z.number().int().positive().optional(),
+        routing: z.union([z.literal("requester"), z.literal("silent")]).optional(),
+      })
+      .strict()
+      .optional(),
+    ui: z
+      .object({
+        exposeRuns: z.boolean().optional(),
+        defaultVisibility: z.union([z.literal("private"), z.literal("operator")]).optional(),
+      })
+      .strict()
+      .optional(),
+    auth: z
+      .object({
+        required: z.boolean().optional(),
+        mode: z.union([z.literal("gateway"), z.literal("operator")]).optional(),
+      })
+      .strict()
+      .optional(),
+  })
+  .strict()
+  .optional();
+
 const HttpUrlSchema = z
   .string()
   .url()
@@ -294,6 +345,7 @@ export const OpenClawSchema = z
     nodeHost: NodeHostSchema,
     agents: AgentsSchema,
     tools: ToolsSchema,
+    agenticApp: AgenticAppSchema,
     bindings: BindingsSchema,
     broadcast: BroadcastSchema,
     audio: AudioSchema,
