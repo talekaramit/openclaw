@@ -29,6 +29,7 @@ import type {
   SessionUsageTimeSeries,
   SessionsListResult,
   SkillStatusReport,
+  SubagentsGraphResult,
   StatusSummary,
 } from "./types.ts";
 import type { ChatAttachment, ChatQueueItem, CronFormState } from "./ui-types.ts";
@@ -150,6 +151,9 @@ export type AppViewState = {
   sessionsFilterLimit: string;
   sessionsIncludeGlobal: boolean;
   sessionsIncludeUnknown: boolean;
+  subagentsLoading: boolean;
+  subagentsError: string | null;
+  subagentsGraph: SubagentsGraphResult | null;
   usageLoading: boolean;
   usageResult: SessionsUsageResult | null;
   usageCostSummary: CostUsageSummary | null;

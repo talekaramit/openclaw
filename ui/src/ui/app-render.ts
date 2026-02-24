@@ -52,6 +52,7 @@ import {
   updateSkillEdit,
   updateSkillEnabled,
 } from "./controllers/skills.ts";
+import { loadSubagentGraph, runSubagentAction } from "./controllers/subagents.ts";
 import { icons } from "./icons.ts";
 import { normalizeBasePath, TAB_GROUPS, subtitleForTab, titleForTab } from "./navigation.ts";
 import { renderAgents } from "./views/agents.ts";
@@ -312,9 +313,43 @@ export function renderApp(state: AppViewState) {
                   state.sessionsIncludeGlobal = next.includeGlobal;
                   state.sessionsIncludeUnknown = next.includeUnknown;
                 },
-                onRefresh: () => loadSessions(state),
+                subagentsLoading: state.subagentsLoading,
+                subagentsError: state.subagentsError,
+                subagentsGraph: state.subagentsGraph,
+                onRefresh: async () => {
+                  await loadSessions(state);
+                  state.subagentsLoading = true;
+                  state.subagentsError = null;
+                  try {
+                    state.subagentsGraph = await loadSubagentGraph({
+                      client: state.client,
+                      connected: state.connected,
+                    });
+                  } catch (err) {
+                    state.subagentsError = String(err);
+                  } finally {
+                    state.subagentsLoading = false;
+                  }
+                },
                 onPatch: (key, patch) => patchSession(state, key, patch),
                 onDelete: (key) => deleteSessionAndRefresh(state, key),
+                onSubagentAction: async (action, target, message) => {
+                  try {
+                    await runSubagentAction({
+                      client: state.client,
+                      connected: state.connected,
+                      action,
+                      target,
+                      message,
+                    });
+                    state.subagentsGraph = await loadSubagentGraph({
+                      client: state.client,
+                      connected: state.connected,
+                    });
+                  } catch (err) {
+                    state.subagentsError = String(err);
+                  }
+                },
               })
             : nothing
         }
