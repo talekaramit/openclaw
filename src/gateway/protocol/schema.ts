@@ -1,3 +1,4 @@
+export * from "./schema/app.js";
 export * from "./schema/agent.js";
 export * from "./schema/agents-models-skills.js";
 export * from "./schema/channels.js";

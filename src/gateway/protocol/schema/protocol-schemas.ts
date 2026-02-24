@@ -36,6 +36,16 @@ import {
   SkillsUpdateParamsSchema,
 } from "./agents-models-skills.js";
 import {
+  AppCreateParamsSchema,
+  AppCreateResultSchema,
+  AppStartParamsSchema,
+  AppStartResultSchema,
+  AppStatusParamsSchema,
+  AppStatusResultSchema,
+  AppStopParamsSchema,
+  AppStopResultSchema,
+} from "./app.js";
+import {
   ChannelsLogoutParamsSchema,
   TalkConfigParamsSchema,
   TalkConfigResultSchema,
@@ -159,6 +169,14 @@ export const ProtocolSchemas: Record<string, TSchema> = {
   AgentIdentityParams: AgentIdentityParamsSchema,
   AgentIdentityResult: AgentIdentityResultSchema,
   AgentWaitParams: AgentWaitParamsSchema,
+  AppCreateParams: AppCreateParamsSchema,
+  AppCreateResult: AppCreateResultSchema,
+  AppStartParams: AppStartParamsSchema,
+  AppStartResult: AppStartResultSchema,
+  AppStopParams: AppStopParamsSchema,
+  AppStopResult: AppStopResultSchema,
+  AppStatusParams: AppStatusParamsSchema,
+  AppStatusResult: AppStatusResultSchema,
   WakeParams: WakeParamsSchema,
   NodePairRequestParams: NodePairRequestParamsSchema,
   NodePairListParams: NodePairListParamsSchema,

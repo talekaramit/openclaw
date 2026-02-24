@@ -42,6 +42,14 @@ import {
   AgentsListResultSchema,
   type AgentWaitParams,
   AgentWaitParamsSchema,
+  type AppCreateParams,
+  AppCreateParamsSchema,
+  type AppStartParams,
+  AppStartParamsSchema,
+  type AppStatusParams,
+  AppStatusParamsSchema,
+  type AppStopParams,
+  AppStopParamsSchema,
   type ChannelsLogoutParams,
   ChannelsLogoutParamsSchema,
   type TalkConfigParams,
@@ -245,6 +253,10 @@ export const validateAgentParams = ajv.compile(AgentParamsSchema);
 export const validateAgentIdentityParams =
   ajv.compile<AgentIdentityParams>(AgentIdentityParamsSchema);
 export const validateAgentWaitParams = ajv.compile<AgentWaitParams>(AgentWaitParamsSchema);
+export const validateAppCreateParams = ajv.compile<AppCreateParams>(AppCreateParamsSchema);
+export const validateAppStartParams = ajv.compile<AppStartParams>(AppStartParamsSchema);
+export const validateAppStopParams = ajv.compile<AppStopParams>(AppStopParamsSchema);
+export const validateAppStatusParams = ajv.compile<AppStatusParams>(AppStatusParamsSchema);
 export const validateWakeParams = ajv.compile<WakeParams>(WakeParamsSchema);
 export const validateAgentsListParams = ajv.compile<AgentsListParams>(AgentsListParamsSchema);
 export const validateAgentsCreateParams = ajv.compile<AgentsCreateParams>(AgentsCreateParamsSchema);
