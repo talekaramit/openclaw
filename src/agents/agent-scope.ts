@@ -8,6 +8,10 @@ import {
 } from "../routing/session-key.js";
 import { resolveUserPath } from "../utils.js";
 import { normalizeSkillFilter } from "./skills/filter.js";
+import {
+  resolvePresetAwareAgentSandboxConfig,
+  resolvePresetAwareToolsConfig,
+} from "./tool-config-presets.js";
 import { resolveDefaultAgentWorkspaceDir } from "./workspace.js";
 
 export { resolveAgentIdFromSessionKey } from "../routing/session-key.js";
@@ -105,6 +109,14 @@ export function resolveAgentConfig(
   if (!entry) {
     return undefined;
   }
+  const fallbackPresetId = cfg.tools?.preset;
+  const tools = resolvePresetAwareToolsConfig(entry.tools, fallbackPresetId);
+  const sandbox = resolvePresetAwareAgentSandboxConfig({
+    sandbox: entry.sandbox,
+    tools: entry.tools,
+    fallbackPresetId,
+  });
+
   return {
     name: typeof entry.name === "string" ? entry.name : undefined,
     workspace: typeof entry.workspace === "string" ? entry.workspace : undefined,
@@ -120,8 +132,8 @@ export function resolveAgentConfig(
     identity: entry.identity,
     groupChat: entry.groupChat,
     subagents: typeof entry.subagents === "object" && entry.subagents ? entry.subagents : undefined,
-    sandbox: entry.sandbox,
-    tools: entry.tools,
+    sandbox,
+    tools,
   };
 }
 

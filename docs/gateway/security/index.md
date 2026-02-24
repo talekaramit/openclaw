@@ -934,3 +934,17 @@ Found a vulnerability in OpenClaw? Please report responsibly:
 1. Email: [security@openclaw.ai](mailto:security@openclaw.ai)
 2. Don't post publicly until fixed
 3. We'll credit you (unless you prefer anonymity)
+
+## Container agent policy presets
+
+OpenClaw supports policy presets that collapse common hardening keys into one selector:
+
+- `tools.preset` for global default
+- `agents.list[].tools.preset` for per-agent override
+
+### Threat model notes
+
+- `container-agent-default` is for trusted but bounded coding work in a container. It keeps exec routed to the sandbox in allowlist mode, keeps filesystem writes in workspace scope, limits session reach to the session tree, and disables host browser control for sandboxed runs.
+- `container-agent-restricted` is for high-risk or low-trust workloads. It denies exec by default, blocks browser/process style sandbox tools, narrows session visibility to self, and keeps host browser control disabled.
+
+These presets are guardrail defaults, not lock-in. Explicit values on `tools.exec.*`, `tools.fs.workspaceOnly`, `tools.sandbox.tools.allow/deny`, `tools.sessions.visibility`, `tools.subagents.tools.allow/deny`, and sandbox browser host-control settings can still tighten or relax behavior depending on what you set.

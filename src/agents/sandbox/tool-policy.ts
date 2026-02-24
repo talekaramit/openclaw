@@ -1,6 +1,7 @@
 import type { OpenClawConfig } from "../../config/config.js";
 import { resolveAgentConfig } from "../agent-scope.js";
 import { compileGlobPatterns, matchesAnyGlobPattern } from "../glob-pattern.js";
+import { resolvePresetAwareToolsConfig } from "../tool-config-presets.js";
 import { expandToolGroups } from "../tool-policy.js";
 import { DEFAULT_TOOL_ALLOW, DEFAULT_TOOL_DENY } from "./constants.js";
 import type {
@@ -39,8 +40,9 @@ export function resolveSandboxToolPolicyForAgent(
   const agentConfig = cfg && agentId ? resolveAgentConfig(cfg, agentId) : undefined;
   const agentAllow = agentConfig?.tools?.sandbox?.tools?.allow;
   const agentDeny = agentConfig?.tools?.sandbox?.tools?.deny;
-  const globalAllow = cfg?.tools?.sandbox?.tools?.allow;
-  const globalDeny = cfg?.tools?.sandbox?.tools?.deny;
+  const globalTools = resolvePresetAwareToolsConfig(cfg?.tools);
+  const globalAllow = globalTools?.sandbox?.tools?.allow;
+  const globalDeny = globalTools?.sandbox?.tools?.deny;
 
   const allowSource = Array.isArray(agentAllow)
     ? ({

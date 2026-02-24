@@ -395,3 +395,39 @@ After configuring multi-agent sandbox and tools:
 - [Multi-Agent Routing](/concepts/multi-agent)
 - [Sandbox Configuration](/gateway/configuration#agentsdefaults-sandbox)
 - [Session Management](/concepts/session)
+
+## Preset bundles for container agents
+
+Use `tools.preset` (global) or `agents.list[].tools.preset` (per-agent) when you want one switch instead of many low-level keys.
+
+### `container-agent-default`
+
+Threat model: a general-purpose containerized coding assistant that should stay inside the workspace and avoid host browser control.
+
+Preset mappings:
+
+- `tools.exec.host: "sandbox"`
+- `tools.exec.security: "allowlist"`
+- `tools.exec.ask: "on-miss"`
+- `tools.fs.workspaceOnly: true`
+- `tools.sandbox.tools.deny: ["gateway", "agents_list"]`
+- `tools.sessions.visibility: "tree"`
+- `tools.subagents.tools.deny: ["gateway", "agents_list", "sessions_send"]`
+- `sandbox.browser.allowHostControl: false` (applies through agent sandbox resolution)
+
+### `container-agent-restricted`
+
+Threat model: untrusted or highly constrained tasks where command execution, browser automation, and cross-session reach should be minimized.
+
+Preset mappings:
+
+- `tools.exec.host: "sandbox"`
+- `tools.exec.security: "deny"`
+- `tools.exec.ask: "always"`
+- `tools.fs.workspaceOnly: true`
+- `tools.sandbox.tools.deny: ["exec", "process", "browser", "gateway", "sessions_send", "sessions_spawn"]`
+- `tools.sessions.visibility: "self"`
+- `tools.subagents.tools.deny: ["exec", "process", "browser", "sessions_spawn", "sessions_send"]`
+- `sandbox.browser.allowHostControl: false`
+
+Manual config still wins. If you set explicit values (for example `tools.exec.security` or `sandbox.browser.allowHostControl`), they override preset defaults.

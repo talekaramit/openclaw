@@ -67,6 +67,10 @@ export const FIELD_HELP: Record<string, string> = {
     "Include full message payloads in trace output (default: true).",
   "diagnostics.cacheTrace.includePrompt": "Include prompt text in trace output (default: true).",
   "diagnostics.cacheTrace.includeSystem": "Include system prompt in trace output (default: true).",
+  "tools.preset":
+    "Apply a predefined container-agent policy bundle (container-agent-default or container-agent-restricted).",
+  "agents.list[].tools.preset":
+    "Per-agent preset override for containerized tool/sandbox policy defaults.",
   "tools.exec.applyPatch.enabled":
     "Experimental. Enables apply_patch for OpenAI models when allowed by tool policy.",
   "tools.exec.applyPatch.workspaceOnly":

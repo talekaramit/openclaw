@@ -251,6 +251,46 @@ describe("resolveAgentConfig", () => {
     expect(result?.tools?.allow).toEqual(["read"]);
   });
 
+  it("applies container-agent-default preset defaults", () => {
+    const cfg: OpenClawConfig = {
+      tools: { preset: "container-agent-default" },
+      agents: {
+        list: [{ id: "main", tools: { preset: "container-agent-default" } }],
+      },
+    };
+
+    const result = resolveAgentConfig(cfg, "main");
+    expect(result?.tools?.exec?.security).toBe("allowlist");
+    expect(result?.tools?.fs?.workspaceOnly).toBe(true);
+    expect(result?.tools?.sessions?.visibility).toBe("tree");
+    expect(result?.tools?.subagents?.tools?.deny).toContain("sessions_send");
+    expect(result?.sandbox?.browser?.allowHostControl).toBe(false);
+  });
+
+  it("lets explicit per-agent values override preset defaults", () => {
+    const cfg: OpenClawConfig = {
+      tools: { preset: "container-agent-restricted" },
+      agents: {
+        list: [
+          {
+            id: "main",
+            sandbox: { browser: { allowHostControl: true } },
+            tools: {
+              preset: "container-agent-restricted",
+              exec: { security: "allowlist" },
+              sessions: { visibility: "agent" },
+            },
+          },
+        ],
+      },
+    };
+
+    const result = resolveAgentConfig(cfg, "main");
+    expect(result?.tools?.exec?.security).toBe("allowlist");
+    expect(result?.tools?.sessions?.visibility).toBe("agent");
+    expect(result?.sandbox?.browser?.allowHostControl).toBe(true);
+  });
+
   it("should normalize agent id", () => {
     const cfg: OpenClawConfig = {
       agents: {

@@ -9,6 +9,7 @@ import { compileGlobPatterns, matchesAnyGlobPattern } from "./glob-pattern.js";
 import type { AnyAgentTool } from "./pi-tools.types.js";
 import { pickSandboxToolPolicy } from "./sandbox-tool-policy.js";
 import type { SandboxToolPolicy } from "./sandbox.js";
+import { resolvePresetAwareToolsConfig } from "./tool-config-presets.js";
 import { expandToolGroups, normalizeToolName } from "./tool-policy.js";
 
 function makeToolPolicyMatcher(policy: SandboxToolPolicy) {
@@ -197,7 +198,7 @@ export function resolveEffectiveToolPolicy(params: {
   const agentConfig =
     params.config && agentId ? resolveAgentConfig(params.config, agentId) : undefined;
   const agentTools = agentConfig?.tools;
-  const globalTools = params.config?.tools;
+  const globalTools = resolvePresetAwareToolsConfig(params.config?.tools);
 
   const profile = agentTools?.profile ?? globalTools?.profile;
   const providerPolicy = resolveProviderToolPolicy({
