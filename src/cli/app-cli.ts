@@ -3,6 +3,7 @@ import { danger } from "../globals.js";
 import { defaultRuntime } from "../runtime.js";
 import type { GatewayRpcOpts } from "./gateway-rpc.js";
 import { addGatewayClientOptions, callGatewayFromCli } from "./gateway-rpc.js";
+import { registerAppInitCommand } from "./program/register.app-init.js";
 
 type AppCliOpts = GatewayRpcOpts & {
   runId?: string;
@@ -32,6 +33,7 @@ export function registerAppCli(program: Command) {
     });
 
   addGatewayClientOptions(app);
+  registerAppInitCommand(app, addGatewayClientOptions);
 
   addGatewayClientOptions(
     app
